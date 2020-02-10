@@ -26,10 +26,10 @@ pub fn handle_insert_results(res: Result<Vec<Row>, tokio_postgres::Error>) -> Ht
             } else {
                 HttpResponse::InternalServerError().finish()
             }
-        },
+        }
         Err(e) => {
             warn!("{}", e);
             HttpResponse::Conflict().finish()
-        },
+        }
     }
 }

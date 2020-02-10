@@ -1,5 +1,5 @@
 use actix_web::web;
-use crate::handlers::{AppState};
+use crate::handlers::AppState;
 use actix::{Actor, StreamHandler, ActorContext, spawn};
 use actix_web_actors::ws;
 use actix_web_actors::ws::{ProtocolError, Message};
