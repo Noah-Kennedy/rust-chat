@@ -6,6 +6,7 @@ use bb8_postgres::bb8::Pool;
 use crate::util::{handle_insert_results, make_db_pool};
 use actix_web_actors::ws;
 use crate::ws::WebsocketActor;
+use actix_web::web::{Payload, Data, Json};
 
 /// Application state
 /// Thread safe
@@ -23,7 +24,7 @@ impl AppState {
 }
 
 /// POST /users JSON{User}
-pub async fn add_user(state: web::Data<AppState>, user: web::Json<User>) -> HttpResponse {
+pub async fn add_user(state: Data<AppState>, user: Json<User>) -> HttpResponse {
     debug!("Adding user {}", user.username);
 
     let db = state.pool.get().await.unwrap();
@@ -37,7 +38,7 @@ pub async fn add_user(state: web::Data<AppState>, user: web::Json<User>) -> Http
 }
 
 /// POST /messages JSON{Msg}
-pub async fn send_message(state: web::Data<AppState>, msg: web::Json<Msg>) -> HttpResponse {
+pub async fn send_message(state: Data<AppState>, msg: Json<Msg>) -> HttpResponse {
     debug!("Sending message {:?}", msg.0);
 
     let db = state.pool.get().await.unwrap();
@@ -51,25 +52,19 @@ pub async fn send_message(state: web::Data<AppState>, msg: web::Json<Msg>) -> Ht
 }
 
 /// GET /messages JSON{User}
-pub async fn get_messages(state: web::Data<AppState>, user: web::Json<User>) -> HttpResponse {
+pub async fn get_messages(state: Data<AppState>, user: Json<User>) -> HttpResponse {
     debug!("Getting messages for user {}", user.username);
     HttpResponse::NotImplemented().finish()
 }
 
 /// GET /users
-pub async fn get_users(state: web::Data<AppState>) -> HttpResponse {
+pub async fn get_users(state: Data<AppState>) -> HttpResponse {
     debug!("Getting all users");
     HttpResponse::NotImplemented().finish()
 }
 
 /// GET /ws
-pub async fn get_websocket(
-    state: web::Data<AppState>,
-    req: HttpRequest,
-    stream: web::Payload,
-)
-    -> Result<HttpResponse, Error>
-{
+pub async fn get_websocket(state: Data<AppState>, req: HttpRequest, stream: Payload) -> Result<HttpResponse, Error> {
     let websocket = WebsocketActor {
         app_state: state
     };
